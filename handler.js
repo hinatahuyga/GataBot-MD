@@ -13,8 +13,8 @@ import fetch from 'node-fetch'
 const { proto } = (await import('@whiskeysockets/baileys')).default
 const isNumber = x => typeof x === 'number' && !isNaN(x)
 const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function () {
-    clearTimeout(this)
-    resolve()
+clearTimeout(this)
+resolve()
 }, ms))
 
 /**
@@ -22,53 +22,46 @@ const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function (
  * @param {import('@adiwajshing/baileys').BaileysEventMap<unknown>['messages.upsert']} groupsUpdate 
  */
 export async function handler(chatUpdate) {
-    this.msgqueque = this.msgqueque || []
-    if (!chatUpdate)
-        return
-    this.pushMessage(chatUpdate.messages).catch(console.error)
-    let m = chatUpdate.messages[chatUpdate.messages.length - 1]
-    if (!m)
-        return
-     if (global.db.data == null) await global.loadDatabase()
+this.msgqueque = this.msgqueque || [];
+this.uptime = this.uptime || Date.now();
+if (!chatUpdate) return
+this.pushMessage(chatUpdate.messages).catch(console.error)
+let m = chatUpdate.messages[chatUpdate.messages.length - 1]
+if (!m) return
+if (global.db.data == null) await global.loadDatabase()
 /*------------------------------------------------*/	     
-if (global.chatgpt.data === null) await global.loadChatgptDB();	
-	
+if (global.chatgpt.data === null) await global.loadChatgptDB()
 /*------------------------------------------------*/	
-    try {
-        m = smsg(this, m) || m
-        if (!m)
-            return
-        m.exp = 0
-        m.limit = false
-        m.money = false
-        try {
-            // TODO: use loop to insert data instead of this
-            let user = global.db.data.users[m.sender]
+try {
+m = smsg(this, m) || m
+if (!m) return
+m.exp = 0
+m.limit = false
+m.money = false
+try {
+// TODO: use loop to insert data instead of this
+let user = global.db.data.users[m.sender]
 /*------------------------------------------------*/	            
 let chatgptUser = global.chatgpt.data.users[m.sender];
-            if (typeof chatgptUser !== "object")
-                global.chatgpt.data.users[m.sender] = [];
-		
+if (typeof chatgptUser !== "object")
+global.chatgpt.data.users[m.sender] = [];		
 /*------------------------------------------------*/
-            if (typeof user !== 'object')
-                global.db.data.users[m.sender] = {}
-		
-            if (user) {
-                if (!isNumber(user.exp)) user.exp = 0
-		if (!('premium' in user)) user.premium = false
-		if (!isNumber(user.joincount)) user.joincount = 1
-                if (!isNumber(user.money)) user.money = 150
-                if (!isNumber(user.limit)) user.limit = 15 	       
-                if (!('registered' in user)) user.registered = false
+if (typeof user !== 'object')
+global.db.data.users[m.sender] = {}
+if (user) {
+if (!isNumber(user.exp)) user.exp = 0
+if (!('premium' in user)) user.premium = false
+	if (!isNumber(user.joincount)) user.joincount = 1
+      if (!isNumber(user.money)) user.money = 150
+        if (!isNumber(user.limit)) user.limit = 15 	       
+        if (!('registered' in user)) user.registered = false
 		if (!('registroR' in user)) user.registroR = false
 		if (!('registroC' in user)) user.registroC = false  
 		if (!isNumber(user.IDregister)) user.IDregister = 0   
-                    
-            if (!user.registered) {
-		                    	 
-		    if (!('name' in user)) user.name = m.name
-		    if (!isNumber(user.age)) user.age = 0
-                    if (!isNumber(user.descripcion)) user.descripcion = 0
+        if (!user.registered) {
+	    if (!('name' in user)) user.name = m.name
+	    if (!isNumber(user.age)) user.age = 0
+            if (!isNumber(user.descripcion)) user.descripcion = 0
 		    if (!isNumber(user.genero)) user.genero = 0
 		    if (!isNumber(user.identidad)) user.identidad = 0
 		    if (!isNumber(user.pasatiempo)) user.pasatiempo = 0
@@ -501,10 +494,8 @@ let chatgptUser = global.chatgpt.data.users[m.sender];
               if (!user.premium) user.premium = false
               if (!user.premium) user.premiumTime = 0
               if (!user.rtrofi) user.rtrofi = 'Bronce'
-                                                   		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
             } else
-                global.db.data.users[m.sender] = {
-		    
+                global.db.data.users[m.sender] = {    
 		    afk: -1,
                     afkReason: '',
 	            reporte: 0,
@@ -1203,9 +1194,9 @@ return;
 return;
 }
 		
-if (botSpam.antispam && m.text && user && user.lastCommandTime && (Date.now() - user.lastCommandTime) < 5000 && !isROwner) {
+if (botSpam.antispam2 && m.text && user && user.lastCommandTime && (Date.now() - user.lastCommandTime) < 6000 && !isROwner) {
 if (user.commandCount === 2) {
-const remainingTime = Math.ceil((user.lastCommandTime + 5000 - Date.now()) / 1000);
+const remainingTime = Math.ceil((user.lastCommandTime + 6000 - Date.now()) / 1000);
 if (remainingTime > 0) {
 const messageText = `*𝙀𝙎𝙋𝙀𝙍𝘼 ${remainingTime} 𝙎𝙀𝙂𝙐𝙉𝘿𝙊 𝘼𝙉𝙏𝙀𝙎 𝘿𝙀 𝙐𝙎𝘼𝙍 𝙊𝙏𝙍𝙊 𝘾𝙊𝙈𝘼𝙉𝘿𝙊*`;
 m.reply(messageText);
@@ -1563,9 +1554,17 @@ let prep = generateWAMessageFromContent(m.chat, { extendedTextMessage: { text: m
 if (msg) return conn.relayMessage(m.chat, prep.message, { messageId: prep.key.id })
 }
 
-let file = global.__filename(import.meta.url, true)
+const file = global.__filename(import.meta.url, true);
 watchFile(file, async () => {
-    unwatchFile(file)
-    console.log(chalk.redBright("Update 'handler.js'"))
-    if (global.reloadHandler) console.log(await global.reloadHandler())
-})
+  unwatchFile(file);
+  console.log(chalk.redBright('Update \'handler.js\''));
+  if (global.reloadHandler) console.log(await global.reloadHandler());
+  
+  if (global.conns && global.conns.length > 0 ) {
+    const users = [...new Set([...global.conns.filter((conn) => conn.user && conn.ws.socket && conn.ws.socket.readyState !== ws.CLOSED).map((conn) => conn)])];
+    for (const userr of users) {
+      userr.subreloadHandler(false)
+    }
+  }
+  
+});
